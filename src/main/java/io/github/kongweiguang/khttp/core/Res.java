@@ -53,13 +53,13 @@ public final class Res {
         return httpExchange().getResponseBody();
     }
 
-    public void send(String str) {
+    public void send(final String str) {
         if (isNull(str)) return;
 
         write(str.getBytes(charset()));
     }
 
-    public void send(byte[] bytes) {
+    public void send(final byte[] bytes) {
         write(bytes);
     }
 

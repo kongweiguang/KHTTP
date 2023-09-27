@@ -57,8 +57,8 @@ public final class KHTTP {
         return this;
     }
 
-    public KHTTP file(final String path) {
-        RestHandler.add("/", new FileHandler(path));
+    public KHTTP file(final String path, final String index) {
+        RestHandler.add("/", new FileHandler(path, index));
         return this;
     }
 

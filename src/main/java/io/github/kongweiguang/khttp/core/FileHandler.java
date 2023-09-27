@@ -1,10 +1,7 @@
 package io.github.kongweiguang.khttp.core;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -12,46 +9,44 @@ import java.util.Formatter;
 import java.util.Locale;
 
 import static io.github.kongweiguang.khttp.core.Util._404;
+import static java.util.Objects.nonNull;
 
 /**
  * 参考jlhttp的文件输出
  */
 public final class FileHandler implements Handler {
 
-    private final String path;
+    private final String base_path;
+    private String index_file = "index.html";
 
-    public FileHandler(final String path) {
-        this.path = path;
+    public FileHandler(final String path, final String index) {
+        this.base_path = path;
+        if (nonNull(index)) {
+            this.index_file = index;
+        }
     }
 
     @Override
     public void doHandler(final Req req, final Res res) throws IOException {
-        final HttpExchange exchange = req.httpExchange();
-        if (Method.GET.equals(Method.valueOf(req.method()))) {
-            String requestPath = exchange.getRequestURI().getPath();
 
-            File file = new File(this.path + requestPath);
+        String path = req.path();
 
-            if (file.exists()) {
+        if (path.endsWith("/")) {
+            path += index_file;
+        }
 
-                if (file.isDirectory()) {
-                    final String index = createIndex(file, requestPath);
-                    exchange.sendResponseHeaders(200, index.length());
-                    OutputStream os = exchange.getResponseBody();
-                    os.write(index.getBytes());
-                    os.close();
-                } else if (file.isFile()) {
-                    // 如果是文件，则返回文件内容
-                    byte[] fileBytes = Files.readAllBytes(file.toPath());
-                    exchange.sendResponseHeaders(200, fileBytes.length);
-                    OutputStream os = exchange.getResponseBody();
-                    os.write(fileBytes);
-                    os.close();
-                }
+        File file = new File(this.base_path + path);
 
-            } else {
-                _404(req.httpExchange(), null);
+        if (file.exists()) {
+
+            if (file.isDirectory()) {
+                res.send(createIndex(file, path));
+            } else if (file.isFile()) {
+                res.send(Files.readAllBytes(file.toPath()));
             }
+
+        } else {
+            _404(req.httpExchange(), null);
         }
 
     }
@@ -71,7 +66,7 @@ public final class FileHandler implements Handler {
 
         w += 2;
 
-        Formatter f = new Formatter(Locale.US);
+        Formatter f = new Formatter(Locale.CHINA);
 
         f.format("<!DOCTYPE html>%n" +
                         "<html><head><title>Index of %s</title></head>%n" +
@@ -111,20 +106,20 @@ public final class FileHandler implements Handler {
         return f.toString();
     }
 
-    public static String getParentPath(String path) {
+    private static String getParentPath(String path) {
         path = trimRight(path, '/'); // remove trailing slash
         int slash = path.lastIndexOf('/');
         return slash < 0 ? null : path.substring(0, slash);
     }
 
-    public static String trimRight(String s, char c) {
+    private static String trimRight(String s, char c) {
         int len = s.length() - 1;
         int end;
         for (end = len; end >= 0 && s.charAt(end) == c; end--) ;
         return end == len ? s : s.substring(0, end + 1);
     }
 
-    public static String toSizeApproxString(long size) {
+    private static String toSizeApproxString(long size) {
         final char[] units = {' ', 'K', 'M', 'G', 'T', 'P', 'E'};
         int u;
         double s;
