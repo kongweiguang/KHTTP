@@ -1,12 +1,15 @@
 package io.github.kongweiguang.khttp;
 
 import com.sun.net.httpserver.Filter;
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 import io.github.kongweiguang.khttp.core.FileHandler;
 import io.github.kongweiguang.khttp.core.Handler;
 import io.github.kongweiguang.khttp.core.Method;
+import io.github.kongweiguang.khttp.core.Req;
+import io.github.kongweiguang.khttp.core.Res;
 import io.github.kongweiguang.khttp.core.RestHandler;
 
 import java.io.IOException;
@@ -63,8 +66,18 @@ public final class KHTTP {
         return this;
     }
 
-    public KHTTP filter(final Filter filter) {
-        filters().add(filter);
+    public KHTTP filter(final io.github.kongweiguang.khttp.core.Filter filter) {
+        filters().add(new Filter() {
+            @Override
+            public void doFilter(final HttpExchange exchange, final Chain chain) throws IOException {
+                filter.doFilter(new Req(exchange), new Res(exchange), chain);
+            }
+
+            @Override
+            public String description() {
+                return filter.description();
+            }
+        });
         return this;
     }
 

@@ -3,6 +3,7 @@ package io.github.kongweiguang.khttp.core;
 import com.sun.net.httpserver.HttpExchange;
 import io.github.kongweiguang.khttp.KHTTP;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,12 @@ public class Test1 {
         final KHTTP ok = KHTTP.of(8081)
                 .executor(Executors.newCachedThreadPool())
                 .file("/Users/kongweiguang/Desktop/hegui/xm/gs")
+                .filter(new Filter() {
+                    @Override
+                    public void doFilter(final Req req, final Res res, final com.sun.net.httpserver.Filter.Chain chain) throws IOException {
+
+                    }
+                })
                 .get("/get", (req, res) -> {
                     try {
                         try {
