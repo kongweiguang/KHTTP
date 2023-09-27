@@ -16,7 +16,9 @@ public class Test1 {
                 .filter(new Filter() {
                     @Override
                     public void doFilter(final Req req, final Res res, final com.sun.net.httpserver.Filter.Chain chain) throws IOException {
-
+                        System.out.println("bf filter");
+                        chain.doFilter(req.httpExchange());
+                        System.out.println("af filter");
                     }
                 })
                 .get("/get", (req, res) -> {
