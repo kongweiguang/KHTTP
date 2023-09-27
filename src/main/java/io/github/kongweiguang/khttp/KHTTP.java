@@ -112,7 +112,7 @@ public final class KHTTP {
         return this;
     }
 
-    private void addConetext() {
+    private void addContext() {
         httpServer()
                 .createContext("/", new RestHandler())
                 .getFilters()
@@ -120,9 +120,13 @@ public final class KHTTP {
     }
 
     public KHTTP ok() {
-        addConetext();
+        addContext();
         httpServer().start();
-        System.err.printf("KHTTP Http Server listen on 【%s:%s】%n", httpServer().getAddress().getHostName(), httpServer().getAddress().getPort());
+        System.err.printf(
+                "KHTTP Http Server listen on 【%s:%s】%n",
+                httpServer().getAddress().getHostName(),
+                httpServer().getAddress().getPort()
+        );
         return this;
     }
 
