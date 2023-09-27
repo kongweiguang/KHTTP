@@ -9,7 +9,6 @@ import java.util.Formatter;
 import java.util.Locale;
 
 import static io.github.kongweiguang.khttp.core.Util._404;
-import static java.util.Objects.nonNull;
 
 /**
  * 参考jlhttp的文件输出
@@ -17,23 +16,15 @@ import static java.util.Objects.nonNull;
 public final class FileHandler implements Handler {
 
     private final String base_path;
-    private String index_file = "index.html";
 
-    public FileHandler(final String path, final String index) {
+    public FileHandler(final String path) {
         this.base_path = path;
-        if (nonNull(index)) {
-            this.index_file = index;
-        }
     }
 
     @Override
     public void doHandler(final Req req, final Res res) throws IOException {
 
         String path = req.path();
-
-        if (path.endsWith("/")) {
-            path += index_file;
-        }
 
         File file = new File(this.base_path + path);
 

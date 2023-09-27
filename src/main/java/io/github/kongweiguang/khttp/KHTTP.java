@@ -26,6 +26,7 @@ import static java.util.Objects.nonNull;
  */
 public final class KHTTP {
 
+
     private final HttpServer httpServer;
     private final List<Filter> filters = new ArrayList<>();
 
@@ -57,8 +58,8 @@ public final class KHTTP {
         return this;
     }
 
-    public KHTTP file(final String path, final String index) {
-        RestHandler.add("/", new FileHandler(path, index));
+    public KHTTP file(final String path) {
+        RestHandler.add("/", new FileHandler(path));
         return this;
     }
 
@@ -98,13 +99,17 @@ public final class KHTTP {
         return this;
     }
 
-
-    public KHTTP ok() {
+    private void addConetext() {
         httpServer()
                 .createContext("/", new RestHandler())
                 .getFilters()
                 .addAll(filters());
+    }
+
+    public KHTTP ok() {
+        addConetext();
         httpServer().start();
+        System.err.printf("KHTTP Http Server listen on 【%s:%s】%n", httpServer().getAddress().getHostName(), httpServer().getAddress().getPort());
         return this;
     }
 

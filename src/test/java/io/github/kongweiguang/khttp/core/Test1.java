@@ -11,7 +11,7 @@ public class Test1 {
     public static void main(String[] args) {
         final KHTTP ok = KHTTP.of(8081)
                 .executor(Executors.newCachedThreadPool())
-                .file("/Users/kongweiguang/Desktop/hegui/xm/gs", "index.html")
+                .file("/Users/kongweiguang/Desktop/hegui/xm/gs")
                 .get("/get", (req, res) -> {
                     try {
                         try {
