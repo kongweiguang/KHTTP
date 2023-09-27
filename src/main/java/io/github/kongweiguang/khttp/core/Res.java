@@ -56,17 +56,17 @@ public final class Res {
     public void send(final String str) {
         if (isNull(str)) return;
 
-        write(str.getBytes(charset()));
+        send(str.getBytes(charset()));
     }
 
     public void send(final byte[] bytes) {
-        write(bytes);
+        write(200, bytes);
     }
 
 
-    public void write(final byte[] bytes) {
+    public void write(int code, final byte[] bytes) {
         try (final OutputStream out = stream()) {
-            httpExchange().sendResponseHeaders(200, bytes.length);
+            httpExchange().sendResponseHeaders(code, bytes.length);
 
             out.write(bytes);
         } catch (IOException e) {

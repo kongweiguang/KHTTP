@@ -2,7 +2,7 @@
   KHTTP
 </h1>
 <p align="center">
-	<strong>基于jdk内部的httpserver封装的轻量级http服务端端</strong>
+	<strong>基于jdk内部的httpserver封装的轻量级http服务端</strong>
 </p>
 
 <p align="center">
@@ -54,3 +54,19 @@ implementation("io.github.kongweiguang:kHTTP:0.1")
 ```
 
 ### 例子
+```java
+final KHTTP ok = KHTTP.of(8080)
+        .executor(Executors.newCachedThreadPool())
+        .get("/get", (req, res) -> {
+            res.send("hello".getBytes());
+        })
+        .post("/post", ((req, res) -> {
+            res.send(
+                    "{\n" +
+                            "    \"key\":\"i am post res\"\n" +
+                            "}"
+            );
+        }))
+        .ok();
+
+```

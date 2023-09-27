@@ -123,9 +123,10 @@ public final class KHTTP {
         addContext();
         httpServer().start();
         System.err.printf(
-                "KHTTP Http Server listen on 【%s:%s】%n",
+                "KHTTP Http Server listen on 【%s:%s】 start time 【%s】 ",
                 httpServer().getAddress().getHostName(),
-                httpServer().getAddress().getPort()
+                httpServer().getAddress().getPort(),
+                String.format("%tF %<tT", System.currentTimeMillis())
         );
         return this;
     }
