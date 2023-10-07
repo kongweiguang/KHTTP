@@ -19,14 +19,11 @@
 
 <hr />
 
-
-参考hutool-http，jlhttp按照自己的编码习惯封装的建议轻量http服务端工具
-
 ### 特点
 
-* 非常轻量，代码简单，大小只有12k
+* 非常轻量，代码简单，大小只有10k
 * api友好，用的很爽
-* 链式编程
+* 支持native构建
 
 ### 使用方式
 
@@ -54,18 +51,19 @@ implementation("io.github.kongweiguang:kHTTP:0.1")
 ```
 
 ### 例子
+
 ```java
-final KHTTP ok = KHTTP.of(8080)
+final KHTTP ok=KHTTP.of(8080)
         .executor(Executors.newCachedThreadPool())
-        .get("/get", (req, res) -> {
-            res.send("hello".getBytes());
+        .get("/get",(req,res)->{
+        res.send("hello".getBytes());
         })
-        .post("/post", ((req, res) -> {
-            res.send(
-                    "{\n" +
-                            "    \"key\":\"i am post res\"\n" +
-                            "}"
-            );
+        .post("/post",((req,res)->{
+        res.send(
+        "{\n"+
+        "    \"key\":\"i am post res\"\n"+
+        "}"
+        );
         }))
         .ok();
 

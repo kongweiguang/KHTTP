@@ -4,10 +4,12 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -136,5 +138,9 @@ public final class Req {
         }
 
         return contentType.toLowerCase().startsWith("multipart/");
+    }
+
+    public void multipart() {
+
     }
 }

@@ -33,14 +33,14 @@ public final class KHTTP {
     private final HttpServer httpServer;
     private final List<Filter> filters = new ArrayList<>();
 
-    private KHTTP(final InetSocketAddress address, final HttpsConfigurator configurator) {
+    private KHTTP(final HttpsConfigurator config) {
         try {
-            if (nonNull(configurator)) {
-                final HttpsServer server = HttpsServer.create(address, 0);
-                server.setHttpsConfigurator(configurator);
+            if (nonNull(config)) {
+                final HttpsServer server = HttpsServer.create();
+                server.setHttpsConfigurator(config);
                 this.httpServer = server;
             } else {
-                this.httpServer = HttpServer.create(address, 0);
+                this.httpServer = HttpServer.create();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -48,12 +48,12 @@ public final class KHTTP {
 
     }
 
-    public static KHTTP of(int port) {
-        return new KHTTP(new InetSocketAddress(port), null);
+    public static KHTTP of() {
+        return new KHTTP(null);
     }
 
-    public static KHTTP of(InetSocketAddress address, HttpsConfigurator config) {
-        return new KHTTP(address, config);
+    public static KHTTP of(final HttpsConfigurator config) {
+        return new KHTTP(config);
     }
 
     public KHTTP executor(final Executor executor) {
@@ -61,8 +61,8 @@ public final class KHTTP {
         return this;
     }
 
-    public KHTTP file(final String path) {
-        RestHandler.add("/", new FileHandler(path));
+    public KHTTP file(final String path, final String... fileName) {
+        RestHandler.add("/", new FileHandler(path, fileName.length > 1 ? fileName[0] : null));
         return this;
     }
 
@@ -82,7 +82,7 @@ public final class KHTTP {
     }
 
     public KHTTP rest(final Method method, final String path, final Handler handler) {
-        RestHandler.add(path, handler);
+        RestHandler.add(method, path, handler);
         return this;
     }
 
@@ -119,16 +119,41 @@ public final class KHTTP {
                 .addAll(filters());
     }
 
-    public KHTTP ok() {
-        addContext();
-        httpServer().start();
+    public void ok(int port) {
+        start(new InetSocketAddress(port));
+    }
+
+
+    public void ok(InetSocketAddress address) {
+        start(address);
+    }
+
+    private void start(final InetSocketAddress address) {
+        try {
+            final long start = System.currentTimeMillis();
+
+            addContext();
+
+            httpServer().bind(address, 0);
+
+            httpServer().start();
+
+            print(start);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void print(long start) {
+        final long cur = System.currentTimeMillis();
         System.err.printf(
-                "KHTTP Http Server listen on 【%s:%s】 start time 【%s】 ",
+                "[%s]KHTTP Server listen on 【%s:%s】 use time %dms",
+                String.format("%tF %<tT", cur),
                 httpServer().getAddress().getHostName(),
                 httpServer().getAddress().getPort(),
-                String.format("%tF %<tT", System.currentTimeMillis())
+                (cur - start)
         );
-        return this;
     }
 
 

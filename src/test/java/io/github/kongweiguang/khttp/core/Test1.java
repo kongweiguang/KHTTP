@@ -6,20 +6,19 @@ import java.util.concurrent.Executors;
 
 public class Test1 {
     public static void main(String[] args) {
-        final KHTTP ok = KHTTP.of(8080)
+        KHTTP.of()
                 .executor(Executors.newCachedThreadPool())
+                .file("/Users/kongweiguang/Desktop/hegui/xm/gs")
                 .get("/get", (req, res) -> {
                     res.send("hello".getBytes());
                 })
                 .post("/post", ((req, res) -> {
-                    res.send(
-                            "{\n" +
-                                    "    \"key\":\"i am post res\"\n" +
-                                    "}"
-                    );
+                    res.send("{\"key\":\"i am post res\"}");
                 }))
-                .ok();
-
+                .post("/upload", (req, res) -> {
+                    req.multipart();
+                })
+                .ok(8080);
 
     }
 }
