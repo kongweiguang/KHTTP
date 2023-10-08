@@ -16,7 +16,7 @@ public class Test1 {
                     res.send("{\"key\":\"i am post res\"}");
                 }))
                 .post("/upload", (req, res) -> {
-                    req.multipart();
+                    req.params();
                 })
                 .ok(8080);
 

@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import static java.util.Objects.isNull;
 
@@ -19,11 +20,28 @@ public final class Util {
         return false;
     }
 
-    public static byte[] read(InputStream source) {
+
+    public static byte[] toByteArray(final InputStream input, final int size) {
+
         try {
-            byte[] buf = new byte[source.available()];
-            source.read(buf);
-            return buf;
+            if (size < 0 || size == 0) {
+                return new byte[0];
+            }
+
+            final byte[] data = new byte[size];
+            int offset = 0;
+            int read;
+
+            while (offset < size && (read = input.read(data, offset, size - offset)) != -1) {
+                offset += read;
+            }
+
+            if (offset != size) {
+                return new byte[0];
+
+            }
+
+            return data;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

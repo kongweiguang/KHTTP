@@ -4,12 +4,15 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -22,7 +25,7 @@ public final class Req {
     private final HttpExchange he;
     private Charset charset;
     private MultiValueMap<String, String> paramMap;
-
+    private Map<String, List<UploadedFile>> fileMap;
     private byte[] bytes;
 
     public HttpExchange httpExchange() {
@@ -91,13 +94,41 @@ public final class Req {
         return uri().getQuery();
     }
 
+
+    public boolean isMultipart() {
+        if (!Objects.equals(Method.valueOf(method()), Method.POST)) {
+            return false;
+        }
+
+        final String contentType = contentType();
+
+        if (isNull(contentType)) {
+            return false;
+        }
+
+        return contentType.toLowerCase().startsWith("multipart/");
+    }
+
     public MultiValueMap<String, String> params() {
         if (isNull(this.paramMap)) {
             this.paramMap = new MultiValueMap<>();
+
             final String query = query();
+
             if (nonNull(query)) {
                 getParams(query, this.paramMap);
             }
+
+            if (isMultipart()) {
+                try {
+                    form();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                getParams(str(), this.paramMap);
+            }
+
         }
         return this.paramMap;
     }
@@ -114,8 +145,9 @@ public final class Req {
 
     public byte[] bytes() {
         if (isNull(this.bytes)) {
-            bytes = Util.read(httpExchange().getRequestBody());
+            bytes = Util.toByteArray(httpExchange().getRequestBody(), Integer.parseInt(header("Content-length")));
         }
+
         return this.bytes;
     }
 
@@ -127,20 +159,33 @@ public final class Req {
         return new ByteArrayInputStream(bytes());
     }
 
-    public boolean isMultipart() {
-        if (!Method.POST.equals(Method.valueOf(method()))) {
-            return false;
-        }
+    private void form() throws Exception {
+        this.fileMap = new HashMap<>();
 
-        final String contentType = contentType();
-        if (isNull(contentType)) {
-            return false;
-        }
+        for (FormResolver.Part item : FormResolver.parser(contentType(), bytes())) {
+            if (item.type().equals("text")) {
+                params().put(item.name(), item.value());
+            } else {
+                final UploadedFile uf = new UploadedFile();
+                uf.setContent(new ByteArrayInputStream(bytes(), item.startIndex(), item.endIndex() - item.startIndex()));
+                uf.setFileName(item.filename());
 
-        return contentType.toLowerCase().startsWith("multipart/");
+                final List<UploadedFile> list = fileMap().computeIfAbsent(uf.fileName(), k -> new ArrayList<>());
+
+                list.add(uf);
+            }
+        }
     }
 
-    public void multipart() {
 
+    public Map<String, List<UploadedFile>> fileMap() {
+        if (isNull(this.fileMap)) {
+            try {
+                form();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return this.fileMap;
     }
 }
