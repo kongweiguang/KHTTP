@@ -52,7 +52,7 @@ public final class KHTTP {
         return new KHTTP(null);
     }
 
-    public static KHTTP of(final HttpsConfigurator config) {
+    public static KHTTP ofHttps(final HttpsConfigurator config) {
         return new KHTTP(config);
     }
 
