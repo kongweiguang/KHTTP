@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
-import io.github.kongweiguang.khttp.core.FileHandler;
+import io.github.kongweiguang.khttp.core.WebHandler;
 import io.github.kongweiguang.khttp.core.Handler;
 import io.github.kongweiguang.khttp.core.Method;
 import io.github.kongweiguang.khttp.core.Req;
@@ -61,8 +61,8 @@ public final class KHTTP {
         return this;
     }
 
-    public KHTTP file(final String path, final String... fileName) {
-        RestHandler.add("/", new FileHandler(path, fileName.length > 1 ? fileName[0] : null));
+    public KHTTP web(final String path, final String... fileName) {
+        RestHandler.add("/", new WebHandler(path, fileName.length > 1 ? fileName[0] : null));
         return this;
     }
 

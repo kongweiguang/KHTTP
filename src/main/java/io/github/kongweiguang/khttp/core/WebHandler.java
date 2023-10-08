@@ -7,12 +7,12 @@ import java.nio.file.Files;
 import static io.github.kongweiguang.khttp.core.Util._404;
 import static java.util.Objects.nonNull;
 
-public final class FileHandler implements Handler {
+public final class WebHandler implements Handler {
 
     private final String base_path;
     private String index_file = "index.html";
 
-    public FileHandler(final String path, final String indexName) {
+    public WebHandler(final String path, final String indexName) {
         this.base_path = path;
         if (nonNull(indexName)) {
             this.index_file = indexName;
