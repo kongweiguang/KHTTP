@@ -2,7 +2,7 @@ package io.github.kongweiguang.khttp.core;
 
 import java.io.InputStream;
 
-public class UploadedFile {
+public class UpFile {
     private String fileName;
     private InputStream content;
 
@@ -11,7 +11,7 @@ public class UploadedFile {
         return fileName;
     }
 
-    public UploadedFile setFileName(final String fileName) {
+    public UpFile setFileName(final String fileName) {
         this.fileName = fileName;
         return this;
     }
@@ -20,7 +20,7 @@ public class UploadedFile {
         return content;
     }
 
-    public UploadedFile setContent(final InputStream content) {
+    public UpFile setContent(final InputStream content) {
         this.content = content;
         return this;
     }

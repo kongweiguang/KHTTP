@@ -25,7 +25,7 @@ public final class Req {
     private final HttpExchange he;
     private Charset charset;
     private MultiValueMap<String, String> paramMap;
-    private Map<String, List<UploadedFile>> fileMap;
+    private Map<String, List<UpFile>> fileMap;
     private byte[] bytes;
 
     public HttpExchange httpExchange() {
@@ -166,11 +166,11 @@ public final class Req {
             if (item.type().equals("text")) {
                 params().put(item.name(), item.value());
             } else {
-                final UploadedFile uf = new UploadedFile();
+                final UpFile uf = new UpFile();
                 uf.setContent(new ByteArrayInputStream(bytes(), item.startIndex(), item.endIndex() - item.startIndex()));
                 uf.setFileName(item.filename());
 
-                final List<UploadedFile> list = fileMap().computeIfAbsent(uf.fileName(), k -> new ArrayList<>());
+                final List<UpFile> list = fileMap().computeIfAbsent(uf.fileName(), k -> new ArrayList<>());
 
                 list.add(uf);
             }
@@ -178,7 +178,7 @@ public final class Req {
     }
 
 
-    public Map<String, List<UploadedFile>> fileMap() {
+    public Map<String, List<UpFile>> fileMap() {
         if (isNull(this.fileMap)) {
             try {
                 form();

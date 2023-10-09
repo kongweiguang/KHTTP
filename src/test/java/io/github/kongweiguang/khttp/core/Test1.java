@@ -22,7 +22,7 @@ public class Test1 {
                 }))
                 .post("/upload", (req, res) -> {
                     final MultiValueMap<String, String> params = req.params();
-                    final Map<String, List<UploadedFile>> files = req.fileMap();
+                    final Map<String, List<UpFile>> files = req.fileMap();
 
                 })
                 .ok(8080);
