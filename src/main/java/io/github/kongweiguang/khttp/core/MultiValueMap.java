@@ -1,9 +1,9 @@
 package io.github.kongweiguang.khttp.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -13,27 +13,27 @@ import java.util.StringJoiner;
  */
 public class MultiValueMap<K, V> {
 
-    private final Map<K, Set<V>> map = new HashMap<>();
+    private final Map<K, List<V>> map = new HashMap<>();
 
-    public Map<K, Set<V>> map() {
+    public Map<K, List<V>> map() {
         return map;
     }
 
     public void put(K key, V value) {
-        final Set<V> list = map.computeIfAbsent(key, k -> new HashSet<>());
+        final List<V> list = map.computeIfAbsent(key, k -> new ArrayList<>());
         list.add(value);
     }
 
-    public Set<V> get(K key) {
-        return map.getOrDefault(key, new HashSet<>());
+    public List<V> get(K key) {
+        return map.getOrDefault(key, new ArrayList<>());
     }
 
-    public Set<V> removeKey(K key) {
+    public List<V> removeKey(K key) {
         return map.remove(key);
     }
 
     public boolean removeValue(K key, V value) {
-        final Set<V> list = map.computeIfAbsent(key, k -> new HashSet<>());
+        final List<V> list = map.computeIfAbsent(key, k -> new ArrayList<>());
         return list.remove(value);
     }
 
