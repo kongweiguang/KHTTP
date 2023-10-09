@@ -12,18 +12,20 @@ public class Test1 {
                 .executor(Executors.newCachedThreadPool())
                 .web("/Users/kongweiguang/Desktop/hegui/xm/gs")
                 .get("/get", (req, res) -> {
+                    final MultiValueMap<String, String> params = req.params();
                     res.send("hello");
                 })
                 .post("/post", ((req, res) -> {
-                    final String str = req.str();
+                    final String str = req.body();
                     System.out.println("str = " + str);
 
                     res.send("{\"key\":\"i am post res\"}");
                 }))
                 .post("/upload", (req, res) -> {
+
                     final MultiValueMap<String, String> params = req.params();
+
                     final Map<String, List<UpFile>> files = req.fileMap();
-                    System.out.println(" ===================== ");
                 })
                 .ok(8080);
 

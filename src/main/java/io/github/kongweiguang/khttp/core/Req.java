@@ -125,7 +125,7 @@ public final class Req {
                     throw new RuntimeException(e);
                 }
             } else {
-                getParams(str(), this.paramMap);
+                getParams(body(), this.paramMap);
             }
 
         }
@@ -150,7 +150,7 @@ public final class Req {
         return this.bytes;
     }
 
-    public String str() {
+    public String body() {
         return new String(bytes(), charset());
     }
 

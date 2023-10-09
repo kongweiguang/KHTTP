@@ -21,9 +21,9 @@
 
 ### 特点
 
-* 非常轻量，代码简单，大小只有10k
+* 非常轻量，代码简单，大小只有24k
 * api友好，用的很爽
-* 支持native构建
+* 支持8+以上的所有版本，支持native构建
 
 ### 使用方式
 
@@ -34,37 +34,44 @@ Maven
 <dependency>
     <groupId>io.github.kongweiguang</groupId>
     <artifactId>kHTTP</artifactId>
-    <version>0.1</version>
+    <version>0.0.1</version>
 </dependency>
 ```
 
 Gradle
 
 ```xml
-implementation group: 'io.github.kongweiguang', name: 'kHTTP', version: '0.1'
+implementation group: 'io.github.kongweiguang', name: 'kHTTP', version: '0.0.1'
 ```
 
 Gradle-Kotlin
 
 ```xml
-implementation("io.github.kongweiguang:kHTTP:0.1")
+implementation("io.github.kongweiguang:kHTTP:0.0.1")
 ```
 
 ### 例子
 
 ```java
-final KHTTP ok=KHTTP.of(8080)
-        .executor(Executors.newCachedThreadPool())
-        .get("/get",(req,res)->{
-        res.send("hello".getBytes());
-        })
-        .post("/post",((req,res)->{
-        res.send(
-        "{\n"+
-        "    \"key\":\"i am post res\"\n"+
-        "}"
-        );
-        }))
-        .ok();
+KHTTP.of()
+    .executor(Executors.newCachedThreadPool())
+    .web("/Users/kongweiguang/Desktop/hegui/xm/gs")
+    .get("/get", (req, res) -> {
+        final MultiValueMap<String, String> params = req.params();
+        res.send("hello");
+    })
+    .post("/post", ((req, res) -> {
+        final String str = req.body();
+        System.out.println("str = " + str);
+    
+        res.send("{\"key\":\"i am post res\"}");
+    }))
+    .post("/upload", (req, res) -> {
+        
+        final MultiValueMap<String, String> params = req.params();
+        
+        final Map<String, List<UpFile>> files = req.fileMap();
+    })
+    .ok(8080);
 
 ```
