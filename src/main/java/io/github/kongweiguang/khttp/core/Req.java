@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +120,7 @@ public final class Req {
 
             if (isMultipart()) {
                 try {
-                    form();
+                    parserForm();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -159,33 +158,21 @@ public final class Req {
         return new ByteArrayInputStream(bytes());
     }
 
-    private void form() throws Exception {
+    private void parserForm() {
         this.fileMap = new HashMap<>();
-
-        for (FormResolver.Part item : FormResolver.parser(contentType(), bytes())) {
-            if (item.type().equals("text")) {
-                params().put(item.name(), item.value());
-            } else {
-                final UpFile uf = new UpFile();
-                uf.setContent(new ByteArrayInputStream(bytes(), item.startIndex(), item.endIndex() - item.startIndex()));
-                uf.setFileName(item.filename());
-
-                final List<UpFile> list = fileMap().computeIfAbsent(uf.fileName(), k -> new ArrayList<>());
-
-                list.add(uf);
-            }
-        }
+        FormResolver.parser(this);
     }
 
 
     public Map<String, List<UpFile>> fileMap() {
         if (isNull(this.fileMap)) {
             try {
-                form();
+                parserForm();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+
         return this.fileMap;
     }
 }
