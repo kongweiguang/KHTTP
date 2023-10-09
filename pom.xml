@@ -8,6 +8,10 @@
     <artifactId>KHTTP</artifactId>
     <version>0.0.1</version>
 
+    <name>${project.artifactId}</name>
+    <description>Java httpserver</description>
+    <url>https://github.com/kongweiguang</url>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -24,8 +28,9 @@
     </licenses>
 
     <scm>
-        <connection>https://github.com/kongweiguang/KHTTP.git</connection>
         <url>https://github.com/kongweiguang/KHTTP</url>
+        <connection>https://github.com/kongweiguang/KHTTP.git</connection>
+        <developerConnection>https://github.com/kongweiguang/KHTTP.git</developerConnection>
     </scm>
 
     <developers>
@@ -44,10 +49,6 @@
             <id>ossrh</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>

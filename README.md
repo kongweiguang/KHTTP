@@ -41,7 +41,8 @@ Maven
 Gradle
 
 ```xml
-implementation group: 'io.github.kongweiguang', name: 'kHTTP', version: '0.0.1'
+implementation 'io.github.kongweiguang:KHTTP:0.0.1'
+
 ```
 
 Gradle-Kotlin
