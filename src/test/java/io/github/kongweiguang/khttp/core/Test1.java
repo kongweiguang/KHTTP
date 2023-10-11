@@ -13,7 +13,7 @@ public class Test1 {
                 .web("/Users/kongweiguang/Desktop/hegui/xm/gs")
                 .get("/get", (req, res) -> {
                     final MultiValueMap<String, String> params = req.params();
-                    res.send("hello");
+                    res.send("hello").send("world");
                 })
                 .post("/post", ((req, res) -> {
                     final String str = req.body();

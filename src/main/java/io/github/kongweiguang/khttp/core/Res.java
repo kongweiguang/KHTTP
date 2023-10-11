@@ -19,6 +19,7 @@ public final class Res {
 
     private final HttpExchange he;
     private Charset charset = StandardCharsets.UTF_8;
+    private ContentType contentType = ContentType.text_plain;
 
     public HttpExchange httpExchange() {
         return he;
@@ -26,6 +27,10 @@ public final class Res {
 
     public Headers getHeaders() {
         return httpExchange().getResponseHeaders();
+    }
+
+    public OutputStream stream() {
+        return httpExchange().getResponseBody();
     }
 
     public Res header(final String k, final String v) {
@@ -39,39 +44,45 @@ public final class Res {
     }
 
 
-    public Res charset(Charset charset) {
+    public Res charset(final Charset charset) {
         this.charset = charset;
         return this;
     }
-
 
     public Charset charset() {
         return this.charset;
     }
 
-    public OutputStream stream() {
-        return httpExchange().getResponseBody();
+    public Res contentType(final ContentType contentType) {
+        this.contentType = contentType;
+        return this;
     }
 
-    public void send(final String str) {
-        if (isNull(str)) return;
+    public Res send(final String str) {
+        if (isNull(str)) {
+            return this;
+        }
 
-        send(str.getBytes(charset()));
+        return send(str.getBytes(charset()));
     }
 
-    public void send(final byte[] bytes) {
-        write(200, bytes);
+    public Res send(final byte[] bytes) {
+        return write(200, bytes);
     }
 
 
-    public void write(int code, final byte[] bytes) {
+    public Res write(int code, final byte[] bytes) {
         try (final OutputStream out = stream()) {
             httpExchange().sendResponseHeaders(code, bytes.length);
+            header(Header.content_type.v(), contentType.v());
 
             out.write(bytes);
+            out.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        return this;
     }
 
 

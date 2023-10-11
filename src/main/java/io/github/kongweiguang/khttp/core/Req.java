@@ -134,7 +134,7 @@ public final class Req {
         return this.paramMap;
     }
 
-    public static void getParams(String url, MultiValueMap<String, String> map) {
+    private static void getParams(String url, MultiValueMap<String, String> map) {
         String[] paramParts = url.split("&");
         for (String paramPart : paramParts) {
             String[] keyValue = paramPart.split("=");
