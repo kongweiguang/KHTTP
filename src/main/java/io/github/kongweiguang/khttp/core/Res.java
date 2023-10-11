@@ -21,7 +21,7 @@ public final class Res {
 
     private final HttpExchange he;
     private Charset charset = StandardCharsets.UTF_8;
-    private ContentType contentType = ContentType.text_plain;
+    private String contentType = ContentType.text_plain.v();
 
     public HttpExchange httpExchange() {
         return he;
@@ -55,7 +55,7 @@ public final class Res {
         return this.charset;
     }
 
-    public Res contentType(final ContentType contentType) {
+    public Res contentType(final String contentType) {
         this.contentType = contentType;
         return this;
     }
@@ -75,7 +75,7 @@ public final class Res {
     public Res file(final String fileName, final byte[] bytes) {
         try {
             header(Header.content_disposition.v(), "attachment;filename=" + URLEncoder.encode(fileName, charset().name()));
-            contentType(ContentType.valueOf(Util.getMimeType(fileName)));
+            contentType(Util.getMimeType(fileName));
 
             send(bytes);
         } catch (UnsupportedEncodingException e) {
@@ -88,7 +88,7 @@ public final class Res {
     public Res write(int code, final byte[] bytes) {
         try (final OutputStream out = stream()) {
             httpExchange().sendResponseHeaders(code, bytes.length);
-            header(Header.content_type.v(), contentType.v());
+            header(Header.content_type.v(), contentType);
 
             out.write(bytes);
             out.flush();
