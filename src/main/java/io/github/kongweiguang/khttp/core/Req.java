@@ -125,7 +125,9 @@ public final class Req {
                     throw new RuntimeException(e);
                 }
             } else {
-                getParams(body(), this.paramMap);
+                if (nonNull(body())) {
+                    getParams(body(), this.paramMap);
+                }
             }
 
         }
@@ -151,6 +153,10 @@ public final class Req {
     }
 
     public String body() {
+        if (bytes().length == 0) {
+            return null;
+        }
+
         return new String(bytes(), charset());
     }
 
