@@ -16,7 +16,7 @@ public class Test1 {
                     res.send("hello").send("world");
                 })
                 .post("/post", ((req, res) -> {
-                    final String str = req.body();
+                    final String str = req.str();
                     System.out.println("str = " + str);
 
                     res.send("{\"key\":\"i am post res\"}");

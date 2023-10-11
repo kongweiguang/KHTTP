@@ -23,6 +23,8 @@ public enum Header {
     user_agent("User-Agent"),
     cookie("Cookie"),
     content_disposition("Content-Disposition"),
+    content_length("Content-Length"),
+
     ;
 
     private final String v;

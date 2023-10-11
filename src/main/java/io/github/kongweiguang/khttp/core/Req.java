@@ -125,9 +125,7 @@ public final class Req {
                     throw new RuntimeException(e);
                 }
             } else {
-                if (nonNull(body())) {
-                    getParams(body(), this.paramMap);
-                }
+                getParams(str(), this.paramMap);
             }
 
         }
@@ -135,26 +133,25 @@ public final class Req {
     }
 
     private static void getParams(String url, MultiValueMap<String, String> map) {
-        String[] paramParts = url.split("&");
-        for (String paramPart : paramParts) {
-            String[] keyValue = paramPart.split("=");
-            if (keyValue.length > 1) {
-                map.put(keyValue[0], keyValue[1]);
+        for (String part : url.split("&")) {
+            String[] kv = part.split("=");
+            if (kv.length > 1) {
+                map.put(kv[0], kv[1]);
             }
         }
     }
 
     public byte[] bytes() {
         if (isNull(this.bytes)) {
-            bytes = Util.toByteArray(httpExchange().getRequestBody(), Integer.parseInt(header("Content-length")));
+            bytes = Util.toByteArray(httpExchange().getRequestBody(), Integer.parseInt(header(Header.content_length.v())));
         }
 
         return this.bytes;
     }
 
-    public String body() {
+    public String str() {
         if (bytes().length == 0) {
-            return null;
+            return "";
         }
 
         return new String(bytes(), charset());
