@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -70,6 +72,18 @@ public final class Res {
         return write(200, bytes);
     }
 
+    public Res file(final String fileName, final byte[] bytes) {
+        try {
+            header(Header.content_disposition.v(), "attachment;filename=" + URLEncoder.encode(fileName, charset().name()));
+            contentType(ContentType.valueOf(Util.getMimeType(fileName)));
+
+            send(bytes);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return this;
+    }
 
     public Res write(int code, final byte[] bytes) {
         try (final OutputStream out = stream()) {

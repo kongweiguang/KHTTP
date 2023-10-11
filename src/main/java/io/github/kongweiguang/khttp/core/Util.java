@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 
 import static java.util.Objects.isNull;
 
@@ -47,4 +46,24 @@ public final class Util {
         }
     }
 
+    //hutool
+    public static String getMimeType(final String fileName) {
+
+        // 补充一些常用的mimeType
+        if (fileName.endsWith(".css")) {
+            return "text/css";
+        } else if (fileName.endsWith(".js")) {
+            return "application/x-javascript";
+        } else if (fileName.endsWith(".rar")) {
+            return "application/x-rar-compressed";
+        } else if (fileName.endsWith(".7z")) {
+            return "application/x-7z-compressed";
+        } else if (fileName.endsWith(".wgt")) {
+            return "application/widget";
+        } else if (fileName.endsWith(".webp")) {
+            return "image/webp";
+        }
+
+        return ContentType.octet_stream.v();
+    }
 }

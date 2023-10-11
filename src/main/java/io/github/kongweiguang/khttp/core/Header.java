@@ -21,7 +21,9 @@ public enum Header {
     authorization("Authorization"),
     content_type("Content-Type"),
     user_agent("User-Agent"),
-    cookie("Cookie");
+    cookie("Cookie"),
+    content_disposition("Content-Disposition"),
+    ;
 
     private final String v;
 
