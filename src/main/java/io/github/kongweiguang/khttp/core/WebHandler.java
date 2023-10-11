@@ -9,6 +9,8 @@ import static java.util.Objects.nonNull;
 
 public final class WebHandler implements Handler {
 
+    public static final String PATH = "_static_";
+
     private final String base_path;
     private String index_file = "index.html";
 

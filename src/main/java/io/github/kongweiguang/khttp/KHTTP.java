@@ -62,7 +62,7 @@ public final class KHTTP {
     }
 
     public KHTTP web(final String path, final String... fileName) {
-        RestHandler.add("/", new WebHandler(path, fileName.length > 1 ? fileName[0] : null));
+        RestHandler.add(WebHandler.PATH, new WebHandler(path, fileName.length > 1 ? fileName[0] : null));
         return this;
     }
 

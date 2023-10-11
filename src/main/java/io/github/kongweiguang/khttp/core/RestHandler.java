@@ -20,8 +20,7 @@ public final class RestHandler implements HttpHandler {
     }
 
     public static void add(final Method method, final String path, final Handler handler) {
-        final Map<String, Handler> map = rest_map.computeIfAbsent(method, k -> new ConcurrentHashMap<>());
-        map.put(path, handler);
+        rest_map.computeIfAbsent(method, k -> new ConcurrentHashMap<>()).put(path, handler);
     }
 
     @Override
@@ -36,7 +35,7 @@ public final class RestHandler implements HttpHandler {
                 handler0(he, handler);
             } else {
                 if (Method.GET.equals(method)) {
-                    handler0(he, defalut_map.get("/"));
+                    handler0(he, defalut_map.get(WebHandler.PATH));
                 }
             }
         } finally {
