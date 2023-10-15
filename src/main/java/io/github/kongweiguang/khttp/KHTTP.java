@@ -148,7 +148,7 @@ public final class KHTTP {
     private void print(long start) {
         final long cur = System.currentTimeMillis();
         System.err.printf(
-                "[%s]KHTTP Server listen on 【%s:%s】 use time %dms",
+                "[%s]KHTTP Server listen on 【%s:%s】 use time %dms %n",
                 String.format("%tF %<tT", cur),
                 httpServer().getAddress().getHostName(),
                 httpServer().getAddress().getPort(),
