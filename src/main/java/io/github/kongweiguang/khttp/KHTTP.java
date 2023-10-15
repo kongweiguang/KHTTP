@@ -5,23 +5,25 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
-import io.github.kongweiguang.khttp.core.WebHandler;
 import io.github.kongweiguang.khttp.core.Handler;
 import io.github.kongweiguang.khttp.core.Method;
 import io.github.kongweiguang.khttp.core.Req;
 import io.github.kongweiguang.khttp.core.Res;
 import io.github.kongweiguang.khttp.core.RestHandler;
+import io.github.kongweiguang.khttp.core.WebHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static io.github.kongweiguang.khttp.core.Method.DELETE;
 import static io.github.kongweiguang.khttp.core.Method.GET;
 import static io.github.kongweiguang.khttp.core.Method.POST;
 import static io.github.kongweiguang.khttp.core.Method.PUT;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -29,35 +31,26 @@ import static java.util.Objects.nonNull;
  */
 public final class KHTTP {
 
-
-    private final HttpServer httpServer;
+    private HttpServer httpServer;
     private final List<Filter> filters = new ArrayList<>();
+    private HttpsConfigurator config;
+    private Executor executor;
 
-    private KHTTP(final HttpsConfigurator config) {
-        try {
-            if (nonNull(config)) {
-                final HttpsServer server = HttpsServer.create();
-                server.setHttpsConfigurator(config);
-                this.httpServer = server;
-            } else {
-                this.httpServer = HttpServer.create();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
+    private KHTTP() {
     }
 
     public static KHTTP of() {
-        return new KHTTP(null);
+        return new KHTTP();
     }
 
-    public static KHTTP ofHttps(final HttpsConfigurator config) {
-        return new KHTTP(config);
+    public KHTTP httpsConfig(final HttpsConfigurator config) {
+        this.config = config;
+        return this;
     }
 
     public KHTTP executor(final Executor executor) {
-        httpServer().setExecutor(executor);
+        this.executor = executor;
         return this;
     }
 
@@ -91,7 +84,6 @@ public final class KHTTP {
         return this;
     }
 
-
     public KHTTP get(final String path, final Handler handler) {
         RestHandler.add(GET, path, handler);
         return this;
@@ -112,13 +104,6 @@ public final class KHTTP {
         return this;
     }
 
-    private void addContext() {
-        httpServer()
-                .createContext("/", new RestHandler())
-                .getFilters()
-                .addAll(filters());
-    }
-
     public void ok(int port) {
         start(new InetSocketAddress(port));
     }
@@ -128,15 +113,20 @@ public final class KHTTP {
         start(address);
     }
 
+
     private void start(final InetSocketAddress address) {
         try {
             final long start = System.currentTimeMillis();
 
+            init();
+
+            server().setExecutor(executor());
+
+            server().bind(address, 0);
+
             addContext();
 
-            httpServer().bind(address, 0);
-
-            httpServer().start();
+            server().start();
 
             print(start);
 
@@ -145,25 +135,58 @@ public final class KHTTP {
         }
     }
 
+    private void init() throws IOException {
+        if (nonNull(config())) {
+            final HttpsServer server = HttpsServer.create();
+            server.setHttpsConfigurator(config());
+            this.httpServer = server;
+        } else {
+            this.httpServer = HttpServer.create();
+        }
+    }
+
+    private void addContext() {
+        server()
+                .createContext("/", new RestHandler())
+                .getFilters()
+                .addAll(filters());
+    }
+
     private void print(long start) {
         final long cur = System.currentTimeMillis();
+
         System.err.printf(
                 "[%s]KHTTP Server listen on 【%s:%s】 use time %dms %n",
                 String.format("%tF %<tT", cur),
-                httpServer().getAddress().getHostName(),
-                httpServer().getAddress().getPort(),
+                server().getAddress().getHostName(),
+                server().getAddress().getPort(),
                 (cur - start)
         );
     }
 
+    public void stop(int delay) {
+        server().stop(delay);
+    }
 
     //get
 
-    public HttpServer httpServer() {
+    public HttpServer server() {
         return httpServer;
     }
 
     public List<Filter> filters() {
         return filters;
+    }
+
+    public HttpsConfigurator config() {
+        return config;
+    }
+
+    public Executor executor() {
+        if (isNull(executor)) {
+            this.executor = Executors.newCachedThreadPool();
+        }
+
+        return executor;
     }
 }
