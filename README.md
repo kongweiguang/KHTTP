@@ -34,21 +34,21 @@ Maven
 <dependency>
     <groupId>io.github.kongweiguang</groupId>
     <artifactId>kHTTP</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
 Gradle
 
 ```xml
-implementation 'io.github.kongweiguang:KHTTP:0.0.2'
+implementation 'io.github.kongweiguang:KHTTP:0.0.3'
 
 ```
 
 Gradle-Kotlin
 
 ```xml
-implementation("io.github.kongweiguang:kHTTP:0.0.2")
+implementation("io.github.kongweiguang:kHTTP:0.0.3")
 ```
 
 ### 例子
