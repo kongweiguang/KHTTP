@@ -24,7 +24,8 @@ public enum Header {
     cookie("Cookie"),
     content_disposition("Content-Disposition"),
     content_length("Content-Length"),
-
+    cache_control("Cache-Control"),
+    connection("Connection")
     ;
 
     private final String v;

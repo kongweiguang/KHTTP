@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -99,5 +101,16 @@ public final class Res {
         return this;
     }
 
+    public PrintWriter writer() {
+        return new PrintWriter(new OutputStreamWriter(stream(), charset));
+    }
+
+    public void close() {
+        try {
+            stream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
